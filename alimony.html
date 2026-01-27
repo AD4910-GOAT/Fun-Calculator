@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Alimony Calculator 💔</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    font-family: "Segoe UI", sans-serif;
+}
+
+body {
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+.container {
+    width: 950px;
+    height: 480px;
+    display: flex;
+    background: rgba(255,255,255,0.1);
+    border-radius: 20px;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    overflow: hidden;
+}
+
+/* CAMERA */
+.camera-box {
+    width: 50%;
+    background: rgba(0,0,0,0.35);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+video {
+    width: 85%;
+    border-radius: 15px;
+    border: 2px solid rgba(255,255,255,0.2);
+}
+
+/* CALCULATOR */
+.calc-box {
+    width: 50%;
+    padding: 30px;
+}
+
+.calc-box h1 {
+    text-align: center;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 12px;
+    border-radius: 10px;
+    border: none;
+    background: rgba(255,255,255,0.15);
+    color: white;
+    font-size: 16px;
+}
+
+button {
+    width: 100%;
+    padding: 14px;
+    margin-top: 10px;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(135deg, #ff416c, #ff4b2b);
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.result {
+    margin-top: 15px;
+    font-size: 22px;
+    text-align: center;
+    color: #ffd369;
+}
+
+.pay-btn {
+    display: none;
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+}
+
+/* PAYMENT MODAL */
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: #1c1c1c;
+    padding: 25px;
+    border-radius: 15px;
+    width: 320px;
+    text-align: center;
+}
+
+.modal-content button {
+    margin-top: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- CAMERA -->
+    <div class="camera-box">
+        <h2>📷 Husband Face Cam</h2>
+        <video id="video" autoplay></video>
+    </div>
+
+    <!-- CALCULATOR -->
+    <div class="calc-box">
+        <h1>Alimony Calculator</h1>
+
+        <input id="hIncome" placeholder="Husband Income (₹)">
+        <input id="wIncome" placeholder="Wife Income (₹)">
+        <input id="hours" placeholder="Work Hours / Week">
+        <input id="friends" placeholder="Friends Count">
+
+        <button onclick="calculate()">Calculate Alimony</button>
+
+        <div class="result" id="result"></div>
+
+        <button class="pay-btn" id="payBtn" onclick="openPay()">💸 Pay Alimony</button>
+    </div>
+
+</div>
+
+<!-- PAYMENT MODAL -->
+<div class="modal" id="modal">
+    <div class="modal-content">
+        <h3>Select Payment Method</h3>
+        <button onclick="pay('UPI')">UPI</button>
+        <button onclick="pay('Card')">Card</button>
+        <button onclick="pay('Net Banking')">Net Banking</button>
+    </div>
+</div>
+
+<script>
+let finalAmount = 0;
+
+function calculate() {
+    let h = Number(hIncome.value);
+    let w = Number(wIncome.value);
+    let hrs = Number(hours.value);
+    let f = Number(friends.value);
+
+    if (!h || !w || !hrs || !f) {
+        result.innerText = "⚠️ Enter all values";
+        return;
+    }
+
+    let diff = h - w;
+    let alimony = diff * 0.30;
+
+    if (hrs > 60) alimony *= 0.9;
+    if (hrs < 40) alimony *= 1.1;
+
+    if (f > 5) {
+        let penalty = Math.min((f - 5) * 0.02, 0.10);
+        alimony *= (1 + penalty);
+    }
+
+    finalAmount = Math.round(alimony);
+    result.innerText = "Alimony: ₹ " + finalAmount;
+    payBtn.style.display = "block";
+}
+
+function openPay() {
+    modal.style.display = "flex";
+}
+
+function pay(method) {
+    modal.style.display = "none";
+    alert("✅ Payment of ₹" + finalAmount + " successful via " + method + " 😭");
+}
+
+// Camera
+navigator.mediaDevices.getUserMedia({ video: true })
+.then(stream => video.srcObject = stream);
+</script>
+
+</body>
+</html>
