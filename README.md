@@ -1,2 +1,1 @@
-# alimony-calculator
-sarcastic alimony calculator with a camera
+fun caclulator just for fun purpose
